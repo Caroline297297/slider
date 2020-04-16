@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>slider</title>
+    <link rel="stylesheet" href="css/test.css"></link>
+    <script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+    <div id="slider-div"></div>
+
+    <script type="text/babel">
+    class Slider extends React.Component{
+    constructor(){
+        super();
+        this.state = {
+            imgs:[
+                './images/1.jpg',
+                './images/2.jpg',
+                './images/3.jpg',
+                './images/4.jpg',
+                './images/5.jpg'
+               ],   
+          showIndex: 0, 
+          timer: null,  
+          show: false  
+        }
+    }
+    render(){
+        return (
+            <div className="ReactCarousel">
+                <div className="contain" 
+                     onMouseEnter={()=>{this.stop()}} 
+                     onMouseLeave={()=>{this.start()}}  
+                >
+                    <ul className="ul">
+                        {
+                            this.state.imgs.map((value, index) => {
+                                return (
+                                    <li className={index === this.state.showIndex ? 'show' : ''}
+                                        key={index} 
+                                    > 
+                                        <img src={value + ''} alt="轮播图" />
+                                    </li>
+                                )
+                            })
+                        }
+                    </ul>
+                    <ul className="dots" style={{width: this.state.imgs.length * 20 + 'px'}}> 
+                        {
+                            this.state.imgs.map((value, index) => {
+                                return (
+                                    <li key={index}  
+                                        className={index === this.state.showIndex ? 'active' : ''} 
+                                        onClick={()=>{this.change(index)}}>
+                                    </li>)
+                            })
+                        }
+                        
+                    </ul>
+                    <div>
+                        <a class="btn-pre" href="javascript:" onClick={(e)=>{this.previous(e)}}></a>
+                        <a class="btn-next" href="javascript:" onClick={(e)=>{this.previous(e)}}></a>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+    componentDidMount(){
+        this.start();
+    }
+    componentWillUnmount() { 
+        this.stop();
+    }
+    stop = () => { 
+        let {timer} = this.state;
+        clearInterval(timer);
+    }
+    start = () => { 
+        let {timer} = this.state;
+        timer = setInterval(() => {
+            this.next();
+        }, 2000);
+        this.setState({
+            timer
+        })
+    }
+    change = (index) => {
+        let {showIndex} = this.state;
+        showIndex = index;
+        this.setState({
+            showIndex
+        })
+    }
+    previous = (e) => { 
+        let ev = e || window.event;
+        let {showIndex, imgs} = this.state;
+        if(showIndex <= 0){
+            showIndex = imgs.length - 1;
+        }else{
+            showIndex --;
+        }
+        this.setState({
+            showIndex
+        })
+    }
+    next = (e) => { 
+        let ev = e || window.event;
+        let {showIndex, imgs} = this.state;
+        if(showIndex >= imgs.length - 1){
+            showIndex = 0;
+        }else{
+            showIndex ++;
+        }
+        this.setState({
+            showIndex
+        })
+    }
+}
+
+    ReactDOM.render(<Slider />, document.getElementById('slider-div'));
+    
+    </script>
+
+</body>
+</html>
